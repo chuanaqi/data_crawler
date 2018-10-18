@@ -1,8 +1,9 @@
 import requests
-from lagou.conf.common import host,referer,proxies,user_agent
+from lagou.conf.common import host,referer,proxies,user_agent,data_path
 import time
 import math
 import pandas as pd
+import random
 # 获取请求结果
 # kind 搜索关键字
 # page 页码 默认是1
@@ -22,7 +23,8 @@ def get_json(kind, page=1,):
     # 请求的url
     url = 'https://www.lagou.com/jobs/positionAjax.json?px=default&city=%E5%8C%97%E4%BA%AC&needAddtionalResult=false'
     # 使用代理访问
-    # response = requests.post(url, headers=header, data=param, proxies=random.choices(proxies))
+    # response = requests.post(url, headers=header, data=param, proxies=random.choices(proxies)[0])
+    # 不使用代理访问
     response = requests.post(url, headers=header, data=param)
     response.encoding = 'utf-8'
     if response.status_code == 200:
@@ -46,7 +48,7 @@ if __name__ == '__main__':
     #for i in range(1, total + 1)
     # 为了节约效率 只爬去前100页的数据
     for i in range(1, 100):
-        position_result = get_json(kind=kind, page= i)
+        position_result = get_json(kind=kind, page=i)
         print(position_result)
         # 每次抓取完成后,暂停一会,防止被服务器拉黑
         time.sleep(15)
@@ -86,4 +88,4 @@ if __name__ == '__main__':
         # 将总数据转化为data frame再输出
         df = pd.DataFrame(data=search_job_result,
                           columns=['公司全名', '公司简称', '公司规模', '融资阶段', '区域', '职位名称', '工作经验', '学历要求', '工资', '职位福利'])
-        df.to_csv('lagou_'+kind+'.csv', index=False, encoding='utf-8_sig')
+        df.to_csv(data_path+'lagou_'+kind+'.csv', index=False, encoding='utf-8_sig')
