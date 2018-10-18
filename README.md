@@ -1,9 +1,9 @@
 # data_crawler
 python爬虫
-##拉勾职位信息爬取分析
-###职位信息爬爬取模块
+## 拉勾职位信息爬取分析
+### 职位信息爬爬取模块
 1.获取报文原始数据
-
+```
 {
 	'totalCount': 10213,
 	'locationInfo': {
@@ -79,3 +79,4 @@ python爬虫
 		'skillLables': ['后端']
 	}]
 }
+```
