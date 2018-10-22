@@ -1,6 +1,24 @@
 # data_crawler
 python爬虫
 ## 拉勾职位信息爬取分析
+### 结构图
+```
+lagou
+│  __init__.py
+│
+├─conf
+│      common.py #配置信息
+│      __init__.py
+│
+├─crawler  爬取模块
+│      job_crawler.py  #职位信息爬取并导出csv文件
+│      __init__.py
+│
+├─data
+│      lagou_python.csv #职位信息
+│
+└─data_analysis  分析模块
+```
 ### 职位信息爬爬取模块
 1.
 1.获取报文原始数据
