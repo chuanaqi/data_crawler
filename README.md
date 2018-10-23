@@ -17,7 +17,7 @@ lagou
 ├─data #爬取数据保存位置
 │
 │
-├─picture #生成图标保存位置
+├─picture #生成图表保存位置
 |
 └─data_analysis  分析模块
        job_analysis.py 数据清洗、分析、可视化
