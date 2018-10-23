@@ -179,7 +179,7 @@ def save_and_show_picture(path,x=0.2,y=0.2):
     plt.subplots_adjust(wspace=x, hspace=y)
     plt.show()
 if __name__ == '__main__':
-    df = data_clean(data_path+'lagou_java.csv')
+    # df = data_clean(data_path+'lagou_java.csv')
     # salary_histogram(df,'大数据')
     # company_distribution_pie_chart(df,'大数据')
     # educational_requirement_histogram(df,'大数据')

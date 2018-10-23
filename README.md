@@ -4,7 +4,7 @@ python爬虫
 ### 结构图
 ```
 lagou
-│  __init__.py
+│
 │
 ├─conf
 │      common.py #配置信息
@@ -14,9 +14,11 @@ lagou
 │      job_crawler.py  #职位信息爬取并导出csv文件
 │      __init__.py
 │
-├─data
-│      #职位信息
+├─data #爬取数据保存位置
 │
+│
+├─picture #生成图标保存位置
+|
 └─data_analysis  分析模块
        job_analysis.py 数据清洗、分析、可视化
        CompareType.py 枚举 比较类型
