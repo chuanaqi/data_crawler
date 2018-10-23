@@ -15,12 +15,14 @@ lagou
 │      __init__.py
 │
 ├─data
-│      lagou_python.csv #职位信息
+│      #职位信息
 │
 └─data_analysis  分析模块
+       job_analysis.py 数据清洗、分析、可视化
+       CompareType.py 枚举 比较类型
 ```
 ### 职位信息爬爬取模块
-1.
+
 1.获取报文原始数据
 ```
 {

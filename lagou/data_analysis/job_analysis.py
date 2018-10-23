@@ -4,14 +4,12 @@ from pylab import *
 from wordcloud import WordCloud
 from lagou.data_analysis.CompareType import CompareType
 from lagou.conf.common import data_path, job_parse_list,picture_path
-
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 def data_clean(path):
     f = open(path,encoding='utf-8')
     # 读取数据
     df = pd.read_csv(f)
     # 数据清洗,剔除实习岗位
-    # print(df['职位名称'].str.contains('实习'))
     df.drop(df[df['职位名称'].str.contains('实习')].index, inplace=True)
     # print(df.describe())
     # 由于CSV文件内的数据是字符串形式,先用正则表达式将字符串转化为列表,再取区间的均值
@@ -105,6 +103,7 @@ def educational_requirement_histogram(df,job,show_type=True):
         save_and_show_picture(picture_path+'educational_requirement_histogram.jpg')
     else:
         plt.title(job)
+#福利词云图
 def welfare_treatment_cloud_picture(df):
     # 绘制词云,将职位福利中的字符串汇总
     text = ''
@@ -127,6 +126,7 @@ def welfare_treatment_cloud_picture(df):
     plt.imshow(cloud)
     plt.axis('off')
     plt.show()
+#各种职位比较图
 def job_compare_chart(compare_type,job_list=[]):
     length = len(job_list)
     x = int(math.sqrt(length))+1
