@@ -1,13 +1,15 @@
-import pandas as pd
-from lagou.conf.common import data_path
-from matplotlib import  pyplot as plt
 import jieba
-from wordcloud import WordCloud
+import pandas as pd
 from pylab import *
+from wordcloud import WordCloud
+from lagou.data_analysis.CompareType import CompareType
+from lagou.conf.common import data_path, job_parse_list,picture_path
+
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 def data_clean(path):
+    f = open(path,encoding='utf-8')
     # 读取数据
-    df = pd.read_csv(path, encoding='utf-8')
+    df = pd.read_csv(f)
     # 数据清洗,剔除实习岗位
     # print(df['职位名称'].str.contains('实习'))
     df.drop(df[df['职位名称'].str.contains('实习')].index, inplace=True)
@@ -38,6 +40,9 @@ def data_clean(path):
     avg_salary = []
     for k in df['salary']:
        int_list = [int(n) for n in k]
+       if len(int_list) == 1:
+           avg_salary.append(int_list[0])
+           continue
        avg_wage = int_list[0]+(int_list[1]-int_list[0])/4
        avg_salary.append(avg_wage)
     df['月工资'] = avg_salary
@@ -46,25 +51,42 @@ def data_clean(path):
     df['学历要求'] = df['学历要求'].replace('不限','大专')
     return df
 #工资直方图
-def job_histogram(df):
+def salary_histogram(df,job,show_type=True):
     plt.hist(df['月工资'])
-    plt.xlabel('工资 (千元)')
+    plt.xlabel('月薪 (k)')
     plt.ylabel('频数')
-    plt.title("工资直方图")
-    plt.savefig('薪资.jpg')
-    plt.show()
-#工资分布饼形图
-def company_distribution_pie_chart(df):
+    if show_type is True:
+        plt.title('{}工资直方图'.format(job))
+        save_and_show_picture(picture_path+'job_histogram.jpg')
+    else:
+        plt.title(job)
+
+    # 学历要求直方图
+def work_year_requirement_histogram(df, job, show_type=True):
+    plt.hist(df['工作经验'])
+    plt.xlabel('年')
+    plt.ylabel('频数')
+    if show_type is True:
+        plt.title('{}工作年限要求直方图'.format(job))
+        save_and_show_picture(picture_path + 'job_histogram.jpg')
+    else:
+        plt.title(job)
+#公司分布饼形图
+def company_distribution_pie_chart(df,job,show_type=True):
     # 绘制饼图并保存
     count = df['区域'].value_counts()
     plt.pie(count, labels=count.keys(), labeldistance=1.4, autopct='%2.1f%%')
     plt.axis('equal')  # 使饼图为正圆形
     plt.legend(loc='upper left', bbox_to_anchor=(-0.1, 1))
-    plt.savefig('pie_chart.jpg')
-    plt.show()
+    if show_type is True:
+        # plt.legend(loc='upper left', bbox_to_anchor=(-0.1, 1))
+        plt.title('{}公司分布饼形图'.format(job))
+        save_and_show_picture(picture_path+'pie_chart.jpg')
+    else:
+        plt.title(job)
 #学历要求直方图
-def educational_requirement_histogram(df):
-    # {'本科': 1317, '大专': 93, '硕士': 65, '博士': 0}
+def educational_requirement_histogram(df,job,show_type=True):
+
     dict = {}
     for i in df['学历要求']:
         if i not in dict.keys():
@@ -72,13 +94,17 @@ def educational_requirement_histogram(df):
         else:
             dict[i] += 1
     index = list(dict.keys())
-    print(index)
+    index.sort()
     num = []
     for i in index:
         num.append(dict[i])
     print(num)
     plt.bar(left=index, height=num, width=0.5)
-    plt.show()
+    if show_type is True:
+        plt.title('{}学历要求直方图'.format(job))
+        save_and_show_picture(picture_path+'educational_requirement_histogram.jpg')
+    else:
+        plt.title(job)
 def welfare_treatment_cloud_picture(df):
     # 绘制词云,将职位福利中的字符串汇总
     text = ''
@@ -101,9 +127,63 @@ def welfare_treatment_cloud_picture(df):
     plt.imshow(cloud)
     plt.axis('off')
     plt.show()
+def job_compare_chart(compare_type,job_list=[]):
+    length = len(job_list)
+    x = int(math.sqrt(length))+1
+    y = x-1
+    #去重
+    job_list = list(set(job_list))
+    job_list.sort()
+    save_path = None
+    suptitle = None
+    wspace = 0.2
+    hspace = 0.2
+    for job in job_list:
+        index = job_list.index(job)+1
+        df = data_clean(data_path + 'lagou_{}.csv'.format(job))
+        plt.subplot(x*100+y*10+index)
+        if compare_type == CompareType.salary:
+            salary_histogram(df,job,False)
+            if suptitle is None:
+                suptitle = '各职位薪资直方图比较'
+                save_path = picture_path+suptitle+'.jpg'
+            wspace = 0.8
+            hspace = 0.8
+        elif compare_type == CompareType.educational_requirement:
+            educational_requirement_histogram(df,job,False)
+            if suptitle is None:
+                suptitle = '各职位学历要求直方图比较'
+                save_path = picture_path+suptitle+'.jpg'
+            wspace = 0.5
+            hspace = 0.5
+        elif compare_type == CompareType.company_distribution:
+            company_distribution_pie_chart(df,job,False)
+            if suptitle is None:
+                suptitle = '各职位公司分布饼形图比较'
+                save_path = picture_path+suptitle+'.jpg'
+
+        elif compare_type == CompareType.work_years:
+            work_year_requirement_histogram(df,job,False)
+            if suptitle is None:
+                suptitle = '各职位工作经验要求直方图比较'
+                save_path = picture_path+suptitle+'.jpg'
+            wspace = 0.8
+            hspace = 0.8
+        else:
+            raise RuntimeError('未知CompareType')
+        plt.suptitle(suptitle)
+
+    save_and_show_picture(save_path,wspace,hspace)
+def save_and_show_picture(path,x=0.2,y=0.2):
+    plt.savefig(path)
+    plt.subplots_adjust(wspace=x, hspace=y)
+    plt.show()
 if __name__ == '__main__':
-    df = data_clean(data_path+'lagou_python.csv')
-    # job_histogram(df)
-    # company_distribution_pie_chart(df)
-    # educational_requirement_histogram(df)
-    welfare_treatment_cloud_picture(df)
+    df = data_clean(data_path+'lagou_java.csv')
+    # salary_histogram(df,'大数据')
+    # company_distribution_pie_chart(df,'大数据')
+    # educational_requirement_histogram(df,'大数据')
+    # work_year_requirement_histogram(df,'java')
+    # welfare_treatment_cloud_picture(df)
+    job_compare_chart(CompareType.work_years,job_parse_list)
+    # print(CompareType.salary)

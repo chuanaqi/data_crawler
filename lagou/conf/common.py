@@ -7,4 +7,9 @@ proxies = [
         {'http': '61.135.217.7:80', 'https': '175.148.72.52:1133'}
     ]
 data_path = '../data/'
-job_list = ['js','大数据','AI','算法']
+picture_path = '../picture/'
+job_list = ['AI','算法']
+
+job_parse_list = ['python','java','php','AI','算法','大数据']
+
+chart_type_dict = {'job_histogram':"各行业工资直方图比较",}
