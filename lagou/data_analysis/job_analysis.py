@@ -54,7 +54,7 @@ def data_clean(path):
 def salary_histogram(df,job,show_type=True):
     plt.hist(df['月工资'])
     plt.xlabel('月薪 (k)')
-    plt.ylabel('频数')
+    plt.ylabel('数量')
     if show_type is True:
         plt.title('{}工资直方图'.format(job))
         save_and_show_picture(picture_path+'job_histogram.jpg')
@@ -64,8 +64,8 @@ def salary_histogram(df,job,show_type=True):
     # 学历要求直方图
 def work_year_requirement_histogram(df, job, show_type=True):
     plt.hist(df['工作经验'])
-    plt.xlabel('年')
-    plt.ylabel('频数')
+    plt.xlabel('工作年限')
+    plt.ylabel('数量')
     if show_type is True:
         plt.title('{}工作年限要求直方图'.format(job))
         save_and_show_picture(picture_path + 'job_histogram.jpg')
@@ -185,5 +185,5 @@ if __name__ == '__main__':
     # educational_requirement_histogram(df,'大数据')
     # work_year_requirement_histogram(df,'java')
     # welfare_treatment_cloud_picture(df)
-    job_compare_chart(CompareType.work_years,job_parse_list)
+    job_compare_chart(CompareType.salary,job_parse_list)
     # print(CompareType.salary)
